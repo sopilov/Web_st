@@ -1,5 +1,3 @@
-import java.util.HashMap;
-
 public class AccountService {
 
     private DBService dbService = new DBService();
