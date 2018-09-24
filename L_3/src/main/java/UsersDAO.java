@@ -1,13 +1,6 @@
 import java.sql.Connection;
 import java.sql.SQLException;
 
-/**
- * @author v.chibrikov
- *         <p>
- *         Пример кода для курса на https://stepic.org/
- *         <p>
- *         Описание курса и лицензия: https://github.com/vitaly-chibrikov/stepic_java_webserver
- */
 public class UsersDAO {
 
     private Executor executor;
@@ -30,7 +23,6 @@ public class UsersDAO {
 
     public void createTable() throws SQLException {
         executor.execUpdate("create table if not exists users (id bigint auto_increment, login varchar(256), password varchar(256), primary key (id))");
-        //executor.execUpdate("create table if not exists users (id bigint auto_increment, user_name varchar(256), primary key (id))");
     }
 
 }
