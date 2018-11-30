@@ -1,16 +1,7 @@
-import org.h2.jdbcx.JdbcDataSource;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-
-/**
- * @author v.chibrikov
- *         <p>
- *         Пример кода для курса на https://stepic.org/
- *         <p>
- *         Описание курса и лицензия: https://github.com/vitaly-chibrikov/stepic_java_webserver
- */
 public class DBService {
     private final Connection connection;
 
@@ -53,11 +44,6 @@ public class DBService {
             String name = "test";
             String pass = "test";
 
-            JdbcDataSource ds = new JdbcDataSource();
-            ds.setURL(url);
-            ds.setUser(name);
-            ds.setPassword(pass);
-
             Connection connection = DriverManager.getConnection(url, name, pass);
             return connection;
         } catch (SQLException e) {
@@ -65,4 +51,46 @@ public class DBService {
         }
         return null;
     }
+
+    //достать все записи при помощи Executor
+    public void getAllFromExecutor () throws SQLException {
+        System.out.println("Test method getAllFromExecutor:");
+        Executor executor = new Executor(connection);
+        List<UserProfile> userProfiles= executor.execQuery("select * from users", result -> {
+            List<UserProfile> users = new ArrayList<>();
+            while (result.next()) {
+                users.add(new UserProfile(result.getString("login"), result.getString("password")));
+                System.out.println("User № " + result.getString("ID") + " login:" + result.getString("login") + ", pass:" + result.getString("password")); //для проверки
+            }
+            return users;
+        });
+    }
+
+    //достать все записи через Statement
+    public void getAllFromStatement () throws SQLException {
+        System.out.println("Test method getAllFromStatement:");
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery("select * from users");
+        while (resultSet.next()) {
+            System.out.println("User № " + resultSet.getString("ID") + " login:" + resultSet.getString("login") + ", pass:" + resultSet.getString("password")); //для проверки
+        }
+        statement.close();
+    }
+
+    // использование PreparedStatement
+    public void getUsePraparedStatement () throws  SQLException {
+        System.out.println("getUsePraparedStatement:");
+        String SQL = "select * from users where ID = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(SQL);
+        ResultSet resultSet = null;
+        for (int i = 1; i <6; i++) {
+            preparedStatement.setInt(1, i);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            System.out.println("User № " + resultSet.getString("ID") + " login:" + resultSet.getString("login") + ", pass:" + resultSet.getString("password"));
+        }
+        preparedStatement.close();
+    }
+
+
 }

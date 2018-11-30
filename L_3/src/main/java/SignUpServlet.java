@@ -5,16 +5,20 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class SignUpServlet extends HttpServlet {
-    private AccountService accountService;
+    private DBService dbService;
 
-    public  SignUpServlet (AccountService accountService) {
-        this.accountService = accountService;
+    public  SignUpServlet (DBService dbService) {
+        this.dbService = dbService;
     }
 
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String login = request.getParameter("login");
         String password = request.getParameter("password");
 
-        accountService.addNewUser(new UserProfile(login, password));
+        try {
+            dbService.addUser(new UserProfile(login, password));
+        } catch (DBException e) {
+            e.printStackTrace();
+        }
     }
 }

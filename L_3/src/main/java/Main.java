@@ -4,10 +4,10 @@ import org.eclipse.jetty.servlet.ServletHolder;
 
 public class Main {
     public static void main(String[] args) throws Exception {
-        AccountService accountService = new AccountService();
+        DBService dbService = new DBService();
 
-        SignInServlet signInServlet = new SignInServlet(accountService);
-        SignUpServlet signUpServlet = new SignUpServlet(accountService);
+        SignInServlet signInServlet = new SignInServlet(dbService);
+        SignUpServlet signUpServlet = new SignUpServlet(dbService);
 
         ServletContextHandler contextHandler = new ServletContextHandler(ServletContextHandler.SESSIONS);
         contextHandler.addServlet(new ServletHolder(signInServlet), "/signin");
@@ -15,6 +15,10 @@ public class Main {
 
         Server server = new Server(8080);
         server.setHandler(contextHandler);
+
+        dbService.getAllFromExecutor();
+        dbService.getAllFromStatement();
+        dbService.getUsePraparedStatement();
 
         server.start();
         java.util.logging.Logger.getGlobal().info("Server started");
